@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SatuPintu — Portal UMKM</title>
+<title>RichDevelopment — Portal UMKM</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
@@ -82,6 +82,17 @@
 
   /* ---------- KLIEN ---------- */
   .client-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .empty-state{
+    max-width:420px; margin:0 auto; text-align:center; padding:48px 32px;
+    border:1px solid var(--border); border-radius:18px; background:var(--surface);
+  }
+  .empty-icon{
+    width:56px; height:56px; border-radius:50%; margin:0 auto 18px;
+    background:rgba(47,167,255,0.1); border:1px solid var(--border-strong);
+    display:flex; align-items:center; justify-content:center; font-size:24px;
+  }
+  .empty-state h3{ font-family:var(--font-display); font-size:17px; font-weight:600; margin-bottom:8px; }
+  .empty-state p{ font-size:13.5px; color:var(--text-muted); margin-bottom:24px; }
   .client-card{ background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; transition:border-color .2s ease, transform .2s ease; opacity:0; transform:translateY(14px); }
   .client-card.visible{ opacity:1; transform:translateY(0); }
   .client-card:hover{ border-color:var(--border-strong); transform:translateY(-4px); }
@@ -210,14 +221,13 @@
 
 <header id="siteHeader">
   <nav>
-    <div class="brand"><span class="brand-mark">SP</span>SatuPintu</div>
+    <div class="brand"><span class="brand-mark">RD</span>RichDevelopment</div>
     <div class="nav-links">
       <a href="#kategori">Kategori</a>
       <a href="#klien">UMKM</a>
       <a href="#cara-kerja">Cara Kerja</a>
       <a href="#kontak">Kontak</a>
     </div>
-    <a href="#daftar" class="btn btn-primary">Daftar Gratis</a>
     <button class="menu-toggle" id="menuToggle" aria-label="Buka menu">&#9776;</button>
   </nav>
 </header>
@@ -286,7 +296,7 @@
       <div class="cat-card reveal"><div class="cat-icon">&#127806;</div><span>Pertanian</span></div>
       <div class="cat-card reveal"><div class="cat-icon">&#128295;</div><span>Jasa</span></div>
       <div class="cat-card reveal"><div class="cat-icon">&#128187;</div><span>Digital</span></div>
-      <div class="cat-card reveal"><div class="cat-icon">&#128138;</div><span>kesehatan</span></div>
+      <div class="cat-card reveal"><div class="cat-icon">&#128138;</div><span>Kesehatan</span></div>
       <div class="cat-card reveal"><div class="cat-icon">&#128666;</div><span>Otomotif</span></div>
     </div>
   </div>
@@ -298,31 +308,12 @@
       <div class="eyebrow">Direktori</div>
       <h2>UMKM yang sudah bergabung</h2>
     </div>
-    <div class="client-grid">
-      <div class="client-card reveal">
-        <div class="client-top"><div class="client-avatar">RJ</div><div><strong>Rasa Jaya Snack</strong><span>Kuliner</span></div></div>
-        <p>Camilan rumahan dengan pengiriman ke seluruh kota.</p>
-      </div>
-      <div class="client-card reveal">
-        <div class="client-top"><div class="client-avatar">TK</div><div><strong>Tenun Kita</strong><span>Fashion</span></div></div>
-        <p>Kain tenun khas daerah, dibuat oleh pengrajin lokal.</p>
-      </div>
-      <div class="client-card reveal">
-        <div class="client-top"><div class="client-avatar">GH</div><div><strong>Griya Hijau</strong><span>Pertanian</span></div></div>
-        <p>Sayur organik segar langsung dari kebun mitra tani.</p>
-      </div>
-      <div class="client-card reveal">
-        <div class="client-top"><div class="client-avatar">KA</div><div><strong>Kayu Asa</strong><span>Kerajinan</span></div></div>
-        <p>Furnitur kayu custom dengan sentuhan modern minimalis.</p>
-      </div>
-      <div class="client-card reveal">
-        <div class="client-top"><div class="client-avatar">FS</div><div><strong>Fix Servis</strong><span>Jasa</span></div></div>
-        <p>Layanan servis elektronik rumah tangga, panggilan cepat.</p>
-      </div>
-      <div class="client-card reveal">
-        <div class="client-top"><div class="client-avatar">NB</div><div><strong>Nusantara Bytes</strong><span>Digital</span></div></div>
-        <p>Jasa desain dan pengelolaan media sosial untuk UMKM.</p>
-      </div>
+    <div class="client-grid" id="clientGrid" style="display:none;"></div>
+    <div class="empty-state reveal" id="emptyState">
+      <div class="empty-icon">&#128075;</div>
+      <h3>Belum ada UMKM yang terdaftar</h3>
+      <p>Jadilah UMKM pertama yang tampil di portal ini.</p>
+      <a href="#daftar" class="btn btn-primary">Daftarkan UMKM Anda</a>
     </div>
   </div>
 </section>
@@ -408,7 +399,7 @@
   <div class="wrap">
     <div class="footer-top">
       <div class="footer-brand">
-        <div class="brand"><span class="brand-mark">SP</span>SatuPintu</div>
+        <div class="brand"><span class="brand-mark">RD</span>RichDevelopment</div>
         <p>Portal satu pintu untuk mengumpulkan dan menampilkan UMKM.</p>
       </div>
       <div class="footer-cols">
@@ -419,15 +410,15 @@
           <a href="#cara-kerja">Cara Kerja</a>
         </div>
         <div class="footer-col">
-          <h4>Kontak</h4>
-          <a href="#">Email</a>
+          <h4>Hubungi Kami</h4>
+          <a href="mailto:inforichdevelopment@gmail.com">inforichdevelopment@gmail.com</a>
           <a href="#">WhatsApp</a>
           <a href="#">Instagram</a>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>&copy; 2026 SatuPintu.</span>
+      <span>&copy; 2026 RichDevelopment.</span>
       <span>Portal untuk UMKM Indonesia.</span>
     </div>
   </div>
@@ -436,6 +427,48 @@
 <script>
   const header = document.getElementById('siteHeader');
   window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 12));
+
+  // ==== GANTI URL INI dengan Web App URL dari Google Apps Script Anda ====
+  const SCRIPT_URL = "PASTE_URL_APPS_SCRIPT_DI_SINI";
+
+  const catIcons = { Kuliner:"&#127859;", Fashion:"&#128092;", Kerajinan:"&#127917;", Pertanian:"&#127806;", Jasa:"&#128295;", Digital:"&#128187;", Kesehatan:"&#128138;", Otomotif:"&#128666;" };
+
+  function initials(name){
+    return name.trim().split(/\s+/).slice(0,2).map(w => w[0].toUpperCase()).join('');
+  }
+
+  function renderDirectory(list){
+    const grid = document.getElementById('clientGrid');
+    const empty = document.getElementById('emptyState');
+    if (!list || list.length === 0){
+      grid.style.display = 'none';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    grid.style.display = 'grid';
+    grid.innerHTML = list.map(item => `
+      <div class="client-card visible">
+        <div class="client-top">
+          <div class="client-avatar">${initials(item.namaUsaha || '?')}</div>
+          <div><strong>${item.namaUsaha || ''}</strong><span>${item.kategori || ''}</span></div>
+        </div>
+        <p>${item.deskripsi || ''}</p>
+      </div>
+    `).join('');
+  }
+
+  async function loadDirectory(){
+    if (SCRIPT_URL.includes('PASTE_URL')) return; // belum disetel, biarkan tampilan default
+    try {
+      const res = await fetch(SCRIPT_URL);
+      const data = await res.json();
+      renderDirectory(data);
+    } catch (err) {
+      console.error('Gagal memuat direktori:', err);
+    }
+  }
+  loadDirectory();
 
   const menuToggle = document.getElementById('menuToggle');
   const navLinks = document.querySelector('.nav-links');
@@ -477,16 +510,40 @@
     if (!dropdown.contains(e.target)) dropdown.classList.remove('open');
   });
 
-  registerForm.addEventListener('submit', (e) => {
+  registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!kategoriInput.value) {
       dropdown.classList.add('open');
       return;
     }
+
+    const payload = {
+      namaUsaha: document.getElementById('namaUsaha').value,
+      kategori: kategoriInput.value,
+      namaPemilik: document.getElementById('namaPemilik').value,
+      whatsapp: document.getElementById('whatsapp').value,
+      email: document.getElementById('email').value,
+      deskripsi: document.getElementById('deskripsi').value
+    };
+
+    if (!SCRIPT_URL.includes('PASTE_URL')) {
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.error('Gagal mengirim pendaftaran:', err);
+      }
+      loadDirectory();
+    }
+
     registerForm.style.display = 'none';
     formSuccess.classList.add('visible');
   });
 </script>
 
 </body>
-</html>
+  </html>
