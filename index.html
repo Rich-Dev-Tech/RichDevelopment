@@ -428,10 +428,8 @@
   const header = document.getElementById('siteHeader');
   window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 12));
 
-  // ==== GANTI URL INI dengan Web App URL dari Google Apps Script Anda ====
-  const SCRIPT_URL = "PASTE_URL_APPS_SCRIPT_DI_SINI";
-
-  const catIcons = { Kuliner:"&#127859;", Fashion:"&#128092;", Kerajinan:"&#127917;", Pertanian:"&#127806;", Jasa:"&#128295;", Digital:"&#128187;", Kesehatan:"&#128138;", Otomotif:"&#128666;" };
+  // ==== GANTI URL INI dengan API URL dari SheetDB Anda ====
+  const SHEETDB_URL = "https://sheetdb.io/api/v1/ig79dr4nd2n8t";
 
   function initials(name){
     return name.trim().split(/\s+/).slice(0,2).map(w => w[0].toUpperCase()).join('');
@@ -459,9 +457,9 @@
   }
 
   async function loadDirectory(){
-    if (SCRIPT_URL.includes('PASTE_URL')) return; // belum disetel, biarkan tampilan default
+    if (SHEETDB_URL.includes('PASTE_URL')) return; // belum disetel, biarkan tampilan default
     try {
-      const res = await fetch(SCRIPT_URL);
+      const res = await fetch(SHEETDB_URL);
       const data = await res.json();
       renderDirectory(data);
     } catch (err) {
@@ -526,13 +524,12 @@
       deskripsi: document.getElementById('deskripsi').value
     };
 
-    if (!SCRIPT_URL.includes('PASTE_URL')) {
+    if (!SHEETDB_URL.includes('PASTE_URL')) {
       try {
-        await fetch(SCRIPT_URL, {
+        await fetch(SHEETDB_URL, {
           method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify(payload)
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: payload })
         });
       } catch (err) {
         console.error('Gagal mengirim pendaftaran:', err);
@@ -546,4 +543,4 @@
 </script>
 
 </body>
-  </html>
+                                                                      </html>
