@@ -101,6 +101,10 @@
   .client-top strong{ display:block; font-size:14.5px; }
   .client-top span{ font-size:12px; color:var(--text-dim); }
   .client-card p{ font-size:13.5px; color:var(--text-muted); }
+  .client-rating{ display:flex; align-items:center; gap:6px; margin-bottom:10px; font-size:13px; }
+  .client-rating .stars{ color:var(--neon-bright); letter-spacing:1px; }
+  .client-rating .stars .dim{ color:var(--text-dim); }
+  .client-rating .num{ color:var(--text-dim); font-size:12px; }
 
   /* ---------- FITUR ---------- */
   .feature-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
@@ -243,9 +247,9 @@
         <a href="#klien" class="btn btn-ghost">Lihat Direktori</a>
       </div>
       <div class="trust-strip">
-        <div class="trust-item"><b>320+</b><span>UMKM terdaftar</span></div>
-        <div class="trust-item"><b>18</b><span>Kategori usaha</span></div>
-        <div class="trust-item"><b>4.8/5</b><span>Kepuasan klien</span></div>
+        <div class="trust-item"><b>Baru</b><span>Portal baru diluncurkan</span></div>
+        <div class="trust-item"><b>8</b><span>Kategori usaha</span></div>
+        <div class="trust-item"><b>Gratis</b><span>Untuk semua UMKM</span></div>
       </div>
     </div>
     <div class="hub-visual">
@@ -389,7 +393,7 @@
       <div class="form-success" id="formSuccess">
         <div class="icon">&#10003;</div>
         <h3>Pendaftaran terkirim</h3>
-        <p>Terima kasih, tim kami akan menghubungi Anda dalam 1&ndash;2 hari kerja.</p>
+        <p>Terima kasih, data Anda sedang diverifikasi dan akan tampil di direktori setelah disetujui.</p>
       </div>
     </div>
   </div>
@@ -435,22 +439,35 @@
     return name.trim().split(/\s+/).slice(0,2).map(w => w[0].toUpperCase()).join('');
   }
 
+  function renderStars(rating){
+    const r = Math.round(Number(rating)) || 0;
+    if (r <= 0) return '';
+    const clamped = Math.min(r, 5);
+    let stars = '';
+    for (let i = 0; i < 5; i++){
+      stars += i < clamped ? '&#9733;' : '<span class="dim">&#9733;</span>';
+    }
+    return `<div class="client-rating"><span class="stars">${stars}</span><span class="num">${clamped}/5</span></div>`;
+  }
+
   function renderDirectory(list){
     const grid = document.getElementById('clientGrid');
     const empty = document.getElementById('emptyState');
-    if (!list || list.length === 0){
+    const approved = (list || []).filter(item => String(item.status || '').trim().toLowerCase() === 'approved');
+    if (approved.length === 0){
       grid.style.display = 'none';
       empty.style.display = 'block';
       return;
     }
     empty.style.display = 'none';
     grid.style.display = 'grid';
-    grid.innerHTML = list.map(item => `
+    grid.innerHTML = approved.map(item => `
       <div class="client-card visible">
         <div class="client-top">
           <div class="client-avatar">${initials(item.namaUsaha || '?')}</div>
           <div><strong>${item.namaUsaha || ''}</strong><span>${item.kategori || ''}</span></div>
         </div>
+        ${renderStars(item.rating)}
         <p>${item.deskripsi || ''}</p>
       </div>
     `).join('');
@@ -521,7 +538,8 @@
       namaPemilik: document.getElementById('namaPemilik').value,
       whatsapp: document.getElementById('whatsapp').value,
       email: document.getElementById('email').value,
-      deskripsi: document.getElementById('deskripsi').value
+      deskripsi: document.getElementById('deskripsi').value,
+      status: 'pending'
     };
 
     if (!SHEETDB_URL.includes('PASTE_URL')) {
