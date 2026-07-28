@@ -529,7 +529,7 @@
         await fetch(SHEETDB_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ data: payload })
+          body: JSON.stringify({ data: [payload] })
         });
       } catch (err) {
         console.error('Gagal mengirim pendaftaran:', err);
@@ -543,4 +543,4 @@
 </script>
 
 </body>
-                                                                      </html>
+  </html>
