@@ -74,11 +74,16 @@
 
   /* ---------- KATEGORI ---------- */
   .cat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
-  .cat-card{ padding:22px 18px; border:1px solid var(--border); border-radius:14px; text-align:center; transition:border-color .2s ease, transform .2s ease; opacity:0; transform:translateY(14px); }
+  .cat-card{ padding:22px 18px; border:1px solid var(--border); border-radius:14px; text-align:center; transition:border-color .2s ease, transform .2s ease; opacity:0; transform:translateY(14px); cursor:pointer; }
   .cat-card.visible{ opacity:1; transform:translateY(0); }
   .cat-card:hover{ border-color:var(--border-strong); transform:translateY(-4px); }
+  .cat-card.active-cat{ border-color:var(--neon); background:rgba(47,167,255,0.08); }
   .cat-icon{ font-size:22px; margin-bottom:10px; color:var(--neon-bright); }
   .cat-card span{ font-size:13.5px; font-weight:500; }
+  .active-filter{ margin-top:14px; font-size:13.5px; color:var(--text-muted); }
+  .active-filter strong{ color:var(--neon-bright); }
+  .clear-filter{ margin-left:10px; color:var(--text-dim); cursor:pointer; text-decoration:underline; }
+  .clear-filter:hover{ color:var(--neon-bright); }
 
   /* ---------- KLIEN ---------- */
   .client-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
@@ -153,6 +158,32 @@
   .form-submit{ width:100%; justify-content:center; margin-top:6px; }
   .form-note{ font-size:12.5px; color:var(--text-dim); text-align:center; margin-top:16px; }
 
+  .star-picker{ display:flex; gap:6px; font-size:26px; }
+  .star-pick{ color:var(--text-dim); cursor:pointer; transition:color .15s ease, transform .15s ease; }
+  .star-pick:hover{ transform:scale(1.15); }
+  .star-pick.active{ color:var(--neon-bright); }
+
+  /* ---------- RATING & ULASAN ---------- */
+  .review-summary{
+    display:flex; align-items:center; gap:20px; max-width:520px; margin:0 auto 40px;
+    padding:24px 28px; border:1px solid var(--border-strong); border-radius:18px; background:var(--surface);
+  }
+  .review-score{ font-family:var(--font-display); font-size:40px; font-weight:700; color:var(--neon-bright); }
+  .review-summary .stars{ color:var(--neon-bright); font-size:18px; letter-spacing:2px; }
+  .review-summary .stars .dim{ color:var(--text-dim); }
+  .review-count{ font-size:12.5px; color:var(--text-dim); }
+  .review-layout{ display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:start; }
+  .review-form-card{ background:var(--surface); border:1px solid var(--border-strong); border-radius:18px; padding:28px; }
+  .review-list{ display:flex; flex-direction:column; gap:14px; max-height:420px; overflow-y:auto; }
+  .review-item{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px 20px; }
+  .review-item .stars{ color:var(--neon-bright); font-size:13px; letter-spacing:1px; margin-bottom:8px; }
+  .review-item .stars .dim{ color:var(--text-dim); }
+  .review-item strong{ display:block; font-size:13.5px; margin-bottom:4px; }
+  .review-item p{ font-size:13px; color:var(--text-muted); }
+  .review-empty{ font-size:13.5px; color:var(--text-dim); text-align:center; padding:24px; }
+  #reviewSuccess{ display:none; }
+  #reviewSuccess.visible{ display:block; }
+
   .dropdown{ position:relative; }
   .dropdown-trigger{
     width:100%; display:flex; align-items:center; justify-content:space-between;
@@ -217,6 +248,8 @@
     .cta-band{ margin:0 16px; padding:44px 22px; }
     .form-card{ padding:28px 22px; }
     .form-row{ grid-template-columns:1fr; }
+    .review-layout{ grid-template-columns:1fr; }
+    .review-summary{ flex-direction:column; text-align:center; }
   }
   @media (max-width: 560px){
     .cat-grid{ grid-template-columns:repeat(2,1fr); }
@@ -236,6 +269,7 @@
       <a href="#kategori">Kategori</a>
       <a href="#klien">UMKM</a>
       <a href="#cara-kerja">Cara Kerja</a>
+      <a href="#ulasan">Ulasan</a>
       <a href="#kontak">Kontak</a>
     </div>
     <button class="menu-toggle" id="menuToggle" aria-label="Buka menu">&#9776;</button>
@@ -299,15 +333,15 @@
       <div class="eyebrow">Kategori</div>
       <h2>Beragam usaha, satu direktori</h2>
     </div>
-    <div class="cat-grid">
-      <div class="cat-card reveal"><div class="cat-icon">&#127859;</div><span>Kuliner</span></div>
-      <div class="cat-card reveal"><div class="cat-icon">&#128092;</div><span>Fashion</span></div>
-      <div class="cat-card reveal"><div class="cat-icon">&#127917;</div><span>Kerajinan</span></div>
-      <div class="cat-card reveal"><div class="cat-icon">&#127806;</div><span>Pertanian</span></div>
-      <div class="cat-card reveal"><div class="cat-icon">&#128295;</div><span>Jasa</span></div>
-      <div class="cat-card reveal"><div class="cat-icon">&#128187;</div><span>Digital</span></div>
-      <div class="cat-card reveal"><div class="cat-icon">&#128138;</div><span>Kesehatan</span></div>
-      <div class="cat-card reveal"><div class="cat-icon">&#128666;</div><span>Otomotif</span></div>
+    <div class="cat-grid" id="catGrid">
+      <div class="cat-card reveal" data-cat="Kuliner"><div class="cat-icon">&#127859;</div><span>Kuliner</span></div>
+      <div class="cat-card reveal" data-cat="Fashion"><div class="cat-icon">&#128092;</div><span>Fashion</span></div>
+      <div class="cat-card reveal" data-cat="Kerajinan"><div class="cat-icon">&#127917;</div><span>Kerajinan</span></div>
+      <div class="cat-card reveal" data-cat="Pertanian"><div class="cat-icon">&#127806;</div><span>Pertanian</span></div>
+      <div class="cat-card reveal" data-cat="Jasa"><div class="cat-icon">&#128295;</div><span>Jasa</span></div>
+      <div class="cat-card reveal" data-cat="Digital"><div class="cat-icon">&#128187;</div><span>Digital</span></div>
+      <div class="cat-card reveal" data-cat="Kesehatan"><div class="cat-icon">&#128138;</div><span>Kesehatan</span></div>
+      <div class="cat-card reveal" data-cat="Otomotif"><div class="cat-icon">&#128666;</div><span>Otomotif</span></div>
     </div>
   </div>
 </section>
@@ -317,6 +351,10 @@
     <div class="sec-head reveal">
       <div class="eyebrow">Direktori</div>
       <h2>UMKM yang sudah bergabung</h2>
+      <div class="active-filter" id="activeFilter" style="display:none;">
+        Menampilkan kategori: <strong id="activeFilterLabel"></strong>
+        <span id="clearFilter" class="clear-filter">&times; Tampilkan semua</span>
+      </div>
     </div>
     <div class="client-grid" id="clientGrid" style="display:none;"></div>
     <div class="empty-state reveal" id="emptyState">
@@ -405,6 +443,54 @@
   </div>
 </section>
 
+<section class="pad alt" id="ulasan">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Rating &amp; Ulasan</div>
+      <h2>Apa kata pengunjung tentang portal ini?</h2>
+    </div>
+
+    <div class="review-summary reveal" id="reviewSummary" style="display:none;">
+      <div class="review-score" id="reviewScore">0.0</div>
+      <div>
+        <div class="stars" id="reviewStarsAvg"></div>
+        <span class="review-count" id="reviewCount">0 ulasan</span>
+      </div>
+    </div>
+
+    <div class="review-layout">
+      <div class="review-form-card reveal" id="reviewFormCard">
+        <div id="reviewFormFields">
+          <label>Beri rating</label>
+          <div class="star-picker" id="siteStarPicker">
+            <span class="star-pick" data-value="1">&#9733;</span>
+            <span class="star-pick" data-value="2">&#9733;</span>
+            <span class="star-pick" data-value="3">&#9733;</span>
+            <span class="star-pick" data-value="4">&#9733;</span>
+            <span class="star-pick" data-value="5">&#9733;</span>
+          </div>
+          <input type="hidden" id="siteRating" value="0">
+          <div class="field full" style="margin-top:16px;">
+            <label for="reviewNama">Nama (opsional)</label>
+            <input type="text" id="reviewNama" placeholder="Nama Anda">
+          </div>
+          <div class="field full">
+            <label for="reviewKomentar">Komentar</label>
+            <textarea id="reviewKomentar" placeholder="Bagikan pengalaman Anda memakai portal ini"></textarea>
+          </div>
+          <button type="button" class="btn btn-primary form-submit" id="submitReview">Kirim Ulasan</button>
+        </div>
+        <div class="form-success" id="reviewSuccess">
+          <div class="icon">&#10003;</div>
+          <h3>Ulasan terkirim</h3>
+          <p>Terima kasih atas penilaian Anda.</p>
+        </div>
+      </div>
+      <div class="review-list" id="reviewList"></div>
+    </div>
+  </div>
+</section>
+
 <footer id="kontak">
   <div class="wrap">
     <div class="footer-top">
@@ -445,15 +531,13 @@
     return name.trim().split(/\s+/).slice(0,2).map(w => w[0].toUpperCase()).join('');
   }
 
-  function renderStars(rating){
-    const r = Math.round(Number(rating)) || 0;
-    if (r <= 0) return '';
-    const clamped = Math.min(r, 5);
+  function starsHTML(rating){
+    const r = Math.min(Math.max(Math.round(Number(rating)) || 0, 0), 5);
     let stars = '';
     for (let i = 0; i < 5; i++){
-      stars += i < clamped ? '&#9733;' : '<span class="dim">&#9733;</span>';
+      stars += i < r ? '&#9733;' : '<span class="dim">&#9733;</span>';
     }
-    return `<div class="client-rating"><span class="stars">${stars}</span><span class="num">${clamped}/5</span></div>`;
+    return stars;
   }
 
   function toWaLink(number){
@@ -464,13 +548,116 @@
     return `https://wa.me/${digits}`;
   }
 
-  function renderDirectory(list){
+  // ==== Rating & Ulasan Website ====
+  const REVIEW_SHEET = 'ulasan';
+
+  function renderReviews(reviews){
+    const list = document.getElementById('reviewList');
+    const summary = document.getElementById('reviewSummary');
+    const scoreEl = document.getElementById('reviewScore');
+    const avgStarsEl = document.getElementById('reviewStarsAvg');
+    const countEl = document.getElementById('reviewCount');
+
+    if (!reviews || reviews.length === 0){
+      summary.style.display = 'none';
+      list.innerHTML = '<div class="review-empty">Belum ada ulasan. Jadilah yang pertama memberi rating!</div>';
+      return;
+    }
+
+    const total = reviews.reduce((sum, r) => sum + (Number(r.rating) || 0), 0);
+    const avg = total / reviews.length;
+
+    summary.style.display = 'flex';
+    scoreEl.textContent = avg.toFixed(1);
+    avgStarsEl.innerHTML = starsHTML(avg);
+    countEl.textContent = `${reviews.length} ulasan`;
+
+    const recent = reviews.slice().reverse().slice(0, 20);
+    list.innerHTML = recent.map(r => `
+      <div class="review-item">
+        <div class="stars">${starsHTML(r.rating)}</div>
+        <strong>${r.nama && r.nama.trim() ? r.nama : 'Pengunjung'}</strong>
+        <p>${r.komentar || ''}</p>
+      </div>
+    `).join('');
+  }
+
+  async function loadReviews(){
+    if (SHEETDB_URL.includes('PASTE_URL')) return;
+    try {
+      const res = await fetch(`${SHEETDB_URL}?sheet=${REVIEW_SHEET}`);
+      const data = await res.json();
+      renderReviews(data);
+    } catch (err) {
+      console.error('Gagal memuat ulasan:', err);
+    }
+  }
+  loadReviews();
+
+  const siteStarPicker = document.getElementById('siteStarPicker');
+  const siteRatingInput = document.getElementById('siteRating');
+  const siteStarEls = siteStarPicker.querySelectorAll('.star-pick');
+  siteStarEls.forEach(star => {
+    star.addEventListener('click', () => {
+      const value = Number(star.dataset.value);
+      siteRatingInput.value = value;
+      siteStarEls.forEach(s => s.classList.toggle('active', Number(s.dataset.value) <= value));
+    });
+  });
+
+  document.getElementById('submitReview').addEventListener('click', async () => {
+    if (Number(siteRatingInput.value) <= 0){
+      siteStarPicker.style.outline = '2px solid var(--rust, red)';
+      return;
+    }
+    const reviewPayload = {
+      rating: siteRatingInput.value,
+      nama: document.getElementById('reviewNama').value,
+      komentar: document.getElementById('reviewKomentar').value
+    };
+    if (!SHEETDB_URL.includes('PASTE_URL')) {
+      try {
+        await fetch(`${SHEETDB_URL}?sheet=${REVIEW_SHEET}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: [reviewPayload] })
+        });
+      } catch (err) {
+        console.error('Gagal mengirim ulasan:', err);
+      }
+      loadReviews();
+    }
+    document.getElementById('reviewFormFields').style.display = 'none';
+    document.getElementById('reviewSuccess').classList.add('visible');
+  });
+
+  let directoryData = [];
+  let activeCategory = null;
+
+  function renderDirectory(){
     const grid = document.getElementById('clientGrid');
     const empty = document.getElementById('emptyState');
-    const approved = (list || []).filter(item => String(item.status || '').trim().toLowerCase() === 'approved');
+    const emptyTitle = empty.querySelector('h3');
+    const emptyText = empty.querySelector('p');
+    const emptyBtn = empty.querySelector('a');
+
+    let approved = directoryData.filter(item => String(item.status || '').trim().toLowerCase() === 'approved');
+    if (activeCategory){
+      approved = approved.filter(item => String(item.kategori || '').trim().toLowerCase() === activeCategory.toLowerCase());
+    }
+
     if (approved.length === 0){
       grid.style.display = 'none';
       empty.style.display = 'block';
+      if (activeCategory){
+        emptyTitle.textContent = `Belum ada UMKM di kategori "${activeCategory}"`;
+        emptyText.textContent = 'Coba lihat kategori lain, atau jadilah yang pertama di kategori ini.';
+        emptyBtn.textContent = 'Daftarkan UMKM Anda';
+      } else {
+        emptyTitle.textContent = 'Belum ada UMKM yang terdaftar';
+        emptyText.textContent = 'Jadilah UMKM pertama yang tampil di portal ini.';
+        emptyBtn.textContent = 'Daftarkan UMKM Anda';
+      }
       return;
     }
     empty.style.display = 'none';
@@ -483,7 +670,6 @@
           <div class="client-avatar">${initials(item.namaUsaha || '?')}</div>
           <div><strong>${item.namaUsaha || ''}</strong><span>${item.kategori || ''}</span></div>
         </div>
-        ${renderStars(item.rating)}
         <p>${item.deskripsi || ''}</p>
         ${waLink ? `<a href="${waLink}" target="_blank" class="client-contact">&#128222; Hubungi UMKM</a>` : ''}
       </div>
@@ -495,13 +681,37 @@
     if (SHEETDB_URL.includes('PASTE_URL')) return; // belum disetel, biarkan tampilan default
     try {
       const res = await fetch(SHEETDB_URL);
-      const data = await res.json();
-      renderDirectory(data);
+      directoryData = await res.json();
+      renderDirectory();
     } catch (err) {
       console.error('Gagal memuat direktori:', err);
     }
   }
   loadDirectory();
+
+  const catGrid = document.getElementById('catGrid');
+  const activeFilter = document.getElementById('activeFilter');
+  const activeFilterLabel = document.getElementById('activeFilterLabel');
+  const clearFilter = document.getElementById('clearFilter');
+
+  catGrid.querySelectorAll('.cat-card').forEach(card => {
+    card.addEventListener('click', () => {
+      activeCategory = card.dataset.cat;
+      catGrid.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active-cat'));
+      card.classList.add('active-cat');
+      activeFilter.style.display = 'block';
+      activeFilterLabel.textContent = activeCategory;
+      renderDirectory();
+      document.getElementById('klien').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  clearFilter.addEventListener('click', () => {
+    activeCategory = null;
+    catGrid.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active-cat'));
+    activeFilter.style.display = 'none';
+    renderDirectory();
+  });
 
   const menuToggle = document.getElementById('menuToggle');
   const navLinks = document.querySelector('.nav-links');
@@ -579,4 +789,4 @@
 </script>
 
 </body>
-  </html>
+                                                                          </html>
