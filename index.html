@@ -111,6 +111,17 @@
   }
   .empty-state h3{ font-family:var(--font-display); font-size:17px; font-weight:600; margin-bottom:8px; }
   .empty-state p{ font-size:13.5px; color:var(--text-muted); margin-bottom:24px; }
+
+  .loading-state{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    padding:40px 20px; font-size:13.5px; color:var(--text-muted);
+  }
+  .spinner{
+    width:16px; height:16px; border-radius:50%;
+    border:2px solid var(--border-strong); border-top-color:var(--neon-bright);
+    animation:spin 0.7s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
   .client-card{ background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; transition:border-color .2s ease, transform .2s ease; opacity:0; transform:translateY(14px); }
   .client-card.visible{ opacity:1; transform:translateY(0); }
   .client-card:hover{ border-color:var(--border-strong); transform:translateY(-4px); }
@@ -388,8 +399,11 @@
         <span id="clearFilter" class="clear-filter">&times; Tampilkan semua</span>
       </div>
     </div>
+    <div class="loading-state" id="directoryLoading">
+      <span class="spinner"></span> Memuat direktori...
+    </div>
     <div class="client-grid" id="clientGrid" style="display:none;"></div>
-    <div class="empty-state reveal" id="emptyState">
+    <div class="empty-state reveal" id="emptyState" style="display:none;">
       <div class="empty-icon">&#128075;</div>
       <h3>Belum ada UMKM yang terdaftar</h3>
       <p>Jadilah UMKM pertama yang tampil di portal ini.</p>
@@ -518,7 +532,9 @@
           <p>Terima kasih atas penilaian Anda.</p>
         </div>
       </div>
-      <div class="review-list" id="reviewList"></div>
+      <div class="review-list" id="reviewList">
+        <div class="loading-state"><span class="spinner"></span> Memuat ulasan...</div>
+      </div>
     </div>
   </div>
 </section>
@@ -640,13 +656,17 @@
   }
 
   async function loadReviews(){
-    if (SHEETDB_URL.includes('PASTE_URL')) return;
+    if (SHEETDB_URL.includes('PASTE_URL')) {
+      renderReviews([]);
+      return;
+    }
     try {
       const res = await fetch(`${SHEETDB_URL}?sheet=${REVIEW_SHEET}`);
       const data = await res.json();
       renderReviews(data);
     } catch (err) {
       console.error('Gagal memuat ulasan:', err);
+      renderReviews([]);
     }
   }
   loadReviews();
@@ -692,6 +712,7 @@
   let activeCategory = null;
 
   function renderDirectory(){
+    document.getElementById('directoryLoading').style.display = 'none';
     const grid = document.getElementById('clientGrid');
     const empty = document.getElementById('emptyState');
     const emptyTitle = empty.querySelector('h3');
@@ -735,13 +756,19 @@
   }
 
   async function loadDirectory(){
-    if (SHEETDB_URL.includes('PASTE_URL')) return; // belum disetel, biarkan tampilan default
+    if (SHEETDB_URL.includes('PASTE_URL')) {
+      document.getElementById('directoryLoading').style.display = 'none';
+      document.getElementById('emptyState').style.display = 'block';
+      return;
+    }
     try {
       const res = await fetch(SHEETDB_URL);
       directoryData = await res.json();
       renderDirectory();
     } catch (err) {
       console.error('Gagal memuat direktori:', err);
+      document.getElementById('directoryLoading').style.display = 'none';
+      document.getElementById('emptyState').style.display = 'block';
     }
   }
   loadDirectory();
