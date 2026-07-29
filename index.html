@@ -230,6 +230,25 @@
   .footer-col a{ display:block; font-size:13.5px; color:var(--text-muted); margin-bottom:9px; }
   .footer-col a:hover{ color:var(--neon-bright); }
   .footer-bottom{ display:flex; justify-content:space-between; padding-top:22px; font-size:12px; color:var(--text-dim); flex-wrap:wrap; gap:10px; }
+  .privacy-link{ color:var(--text-dim); text-decoration:underline; }
+  .privacy-link:hover{ color:var(--neon-bright); }
+
+  /* ---------- MODAL KEBIJAKAN PRIVASI ---------- */
+  .modal-overlay{
+    display:none; position:fixed; inset:0; z-index:100; background:rgba(4,6,10,0.72);
+    align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(3px);
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal-box{
+    background:var(--surface-hi); border:1px solid var(--border-strong); border-radius:20px;
+    max-width:560px; width:100%; max-height:80vh; overflow-y:auto; padding:28px;
+  }
+  .modal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+  .modal-head h3{ font-family:var(--font-display); font-size:19px; font-weight:600; }
+  .modal-close{ background:none; border:none; color:var(--text-dim); font-size:26px; cursor:pointer; line-height:1; }
+  .modal-close:hover{ color:var(--neon-bright); }
+  .modal-body p{ font-size:13.5px; color:var(--text-muted); margin-bottom:14px; line-height:1.65; }
+  .modal-body strong{ color:var(--text); }
 
   .reveal{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
   .reveal.visible{ opacity:1; transform:translateY(0); }
@@ -515,10 +534,35 @@
     </div>
     <div class="footer-bottom">
       <span>&copy; 2026 RichDevelopment.</span>
-      <span>Portal untuk UMKM Indonesia.</span>
+      <span><a href="#" id="openPrivacy" class="privacy-link">Kebijakan Privasi</a> &middot; Portal untuk UMKM Indonesia.</span>
     </div>
   </div>
 </footer>
+
+<div class="modal-overlay" id="privacyModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Kebijakan Privasi</h3>
+      <button type="button" id="closePrivacy" class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Data yang kami kumpulkan</strong></p>
+      <p>Saat Anda mendaftarkan UMKM, kami mengumpulkan: nama usaha, kategori, nama pemilik, nomor WhatsApp, email, dan deskripsi singkat usaha. Saat Anda memberi rating/ulasan, kami mengumpulkan: rating, nama (opsional), dan komentar.</p>
+
+      <p><strong>Untuk apa data ini digunakan</strong></p>
+      <p>Data pendaftaran UMKM digunakan untuk proses verifikasi sebelum ditampilkan di Direktori portal ini. Nama usaha, kategori, deskripsi, dan nomor WhatsApp akan ditampilkan secara publik agar pengunjung dapat menghubungi UMKM tersebut. Nama pemilik dan email tidak ditampilkan secara publik, hanya digunakan untuk keperluan verifikasi internal.</p>
+
+      <p><strong>Siapa yang dapat melihat data</strong></p>
+      <p>Data yang ditampilkan di Direktori (nama usaha, kategori, deskripsi, tombol kontak WhatsApp) dapat dilihat oleh siapa saja yang mengunjungi website ini. Data lain (nama pemilik, email) hanya dapat diakses oleh pengelola portal.</p>
+
+      <p><strong>Penyimpanan data</strong></p>
+      <p>Data disimpan menggunakan Google Sheets dan layanan pihak ketiga (SheetDB) sebagai penghubung antara formulir dan penyimpanan data. Kami tidak menjual atau membagikan data Anda ke pihak ketiga untuk tujuan pemasaran.</p>
+
+      <p><strong>Hak Anda</strong></p>
+      <p>Anda dapat meminta data Anda diperbarui atau dihapus dari Direktori kapan saja dengan menghubungi kami melalui email atau WhatsApp yang tercantum di bagian Hubungi Kami.</p>
+    </div>
+  </div>
+</div>
 
 <script>
   const header = document.getElementById('siteHeader');
@@ -785,6 +829,18 @@
 
     registerForm.style.display = 'none';
     formSuccess.classList.add('visible');
+  });
+
+  const privacyModal = document.getElementById('privacyModal');
+  document.getElementById('openPrivacy').addEventListener('click', (e) => {
+    e.preventDefault();
+    privacyModal.classList.add('open');
+  });
+  document.getElementById('closePrivacy').addEventListener('click', () => {
+    privacyModal.classList.remove('open');
+  });
+  privacyModal.addEventListener('click', (e) => {
+    if (e.target === privacyModal) privacyModal.classList.remove('open');
   });
 </script>
 
