@@ -274,8 +274,12 @@
   .modal-body p{ font-size:13.5px; color:var(--text-muted); margin-bottom:14px; line-height:1.65; }
   .modal-body strong{ color:var(--text); }
 
-  .reveal{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
-  .reveal.visible{ opacity:1; transform:translateY(0); }
+  .reveal{ opacity:0; transform:translateX(-36px); transition:opacity .8s cubic-bezier(.22,.75,.32,1), transform .8s cubic-bezier(.22,.75,.32,1); }
+  .reveal.visible{ opacity:1; transform:translateX(0); }
+
+  .letter-heading{ overflow:hidden; }
+  .letter{ display:inline-block; opacity:0; transform:translateX(-18px); transition:opacity .5s cubic-bezier(.22,.75,.32,1), transform .5s cubic-bezier(.22,.75,.32,1); }
+  .letter.visible{ opacity:1; transform:translateX(0); }
 
   @media (max-width: 900px){
     .nav-links{ display:none; }
@@ -323,7 +327,7 @@
   <div class="wrap">
     <div>
       <div class="eyebrow">Portal UMKM</div>
-      <h1>Satu pintu untuk <span>semua UMKM</span> Anda.</h1>
+      <h1 class="letter-heading">Satu pintu untuk <span>semua UMKM</span> Anda.</h1>
       <p class="lead">Kumpulkan seluruh klien UMKM dalam satu halaman yang rapi, mudah dicari, dan siap dibagikan kapan saja.</p>
       <div class="hero-ctas">
         <a href="#daftar" class="btn btn-primary">Daftarkan UMKM</a>
@@ -374,7 +378,7 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="eyebrow">Kategori</div>
-      <h2>Beragam usaha, satu direktori</h2>
+      <h2 class="letter-heading">Beragam usaha, satu direktori</h2>
     </div>
     <div class="cat-grid" id="catGrid">
       <div class="cat-card reveal" data-cat="Kuliner"><div class="cat-icon">&#127859;</div><span>Kuliner</span></div>
@@ -393,7 +397,7 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="eyebrow">Direktori</div>
-      <h2>UMKM yang sudah bergabung</h2>
+      <h2 class="letter-heading">UMKM yang sudah bergabung</h2>
       <div class="active-filter" id="activeFilter" style="display:none;">
         Menampilkan kategori: <strong id="activeFilterLabel"></strong>
         <span id="clearFilter" class="clear-filter">&times; Tampilkan semua</span>
@@ -416,7 +420,7 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="eyebrow">Cara Kerja</div>
-      <h2>Gabung dalam tiga langkah</h2>
+      <h2 class="letter-heading">Gabung dalam tiga langkah</h2>
     </div>
     <div class="steps">
       <div class="step reveal"><div class="step-num">01</div><h3>Daftar</h3><p>Isi data usaha Anda secara singkat dan jelas.</p></div>
@@ -430,7 +434,7 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="eyebrow">Pendaftaran</div>
-      <h2>Daftarkan UMKM Anda</h2>
+      <h2 class="letter-heading">Daftarkan UMKM Anda</h2>
       <p>Isi data singkat berikut, tim kami akan menghubungi Anda setelah verifikasi.</p>
     </div>
     <div class="form-card reveal">
@@ -493,7 +497,7 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="eyebrow">Rating &amp; Ulasan</div>
-      <h2>Apa kata pengunjung tentang portal ini?</h2>
+      <h2 class="letter-heading">Apa kata pengunjung tentang portal ini?</h2>
     </div>
 
     <div class="review-summary reveal" id="reviewSummary" style="display:none;">
@@ -811,6 +815,45 @@
   }, { threshold:0.15 });
   revealEls.forEach(el => observer.observe(el));
 
+  // ==== Animasi huruf dari samping untuk judul ====
+  function wrapLetters(node){
+    node.childNodes.forEach(child => {
+      if (child.nodeType === Node.TEXT_NODE){
+        const frag = document.createDocumentFragment();
+        [...child.textContent].forEach(ch => {
+          if (ch === ' '){
+            frag.appendChild(document.createTextNode(' '));
+          } else {
+            const span = document.createElement('span');
+            span.className = 'letter';
+            span.textContent = ch;
+            frag.appendChild(span);
+          }
+        });
+        child.replaceWith(frag);
+      } else if (child.nodeType === Node.ELEMENT_NODE){
+        wrapLetters(child);
+      }
+    });
+  }
+
+  const headings = document.querySelectorAll('.letter-heading');
+  headings.forEach(h => wrapLetters(h));
+
+  const headingObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        const letters = entry.target.querySelectorAll('.letter');
+        letters.forEach((letter, i) => {
+          letter.style.transitionDelay = `${i * 35}ms`;
+          letter.classList.add('visible');
+        });
+        headingObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold:0.3 });
+  headings.forEach(h => headingObserver.observe(h));
+
   const registerForm = document.getElementById('registerForm');
   const formSuccess = document.getElementById('formSuccess');
 
@@ -885,4 +928,4 @@
 </script>
 
 </body>
-</html>
+  </html>
